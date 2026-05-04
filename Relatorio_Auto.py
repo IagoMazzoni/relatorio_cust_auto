@@ -35,30 +35,154 @@ def criaExcel(nome_arquivo):
 def adicionaAbas(hierarquia, workbook):
     vetor_hierarquia = hierarquia.split(",")
 
-    workbook.add_worksheet("MENU")
+    abaMenu = workbook.add_worksheet("MENU")
+    editarMenu(abaMenu, workbook, hierarquia)
 
     for item in vetor_hierarquia:
         print("Criando aba " + item)
     
         if item.upper() == "PAIS":
-            workbook.add_worksheet("PAIS")
+            abaPais = workbook.add_worksheet("PAIS")
     
         elif item.upper() == "ESTADO":
-            workbook.add_worksheet("ESTADO")
+            abaEstado = workbook.add_worksheet("ESTADO")
     
         elif item.upper() == "REGIONAL":
-            workbook.add_worksheet("REGIONAL")
+            abaRegional = workbook.add_worksheet("REGIONAL")
     
         elif item.upper() == "MUNICIPIO":
-            workbook.add_worksheet("MUNICIPIO")
+            abaMunicipio = workbook.add_worksheet("MUNICIPIO")
     
         elif item.upper() == "ESCOLA":
-            workbook.add_worksheet("ESCOLA")
+            abaEscola = workbook.add_worksheet("ESCOLA")
     
         elif item.upper() == "TURMA":
-            workbook.add_worksheet("TURMA")
+            abaTurma = workbook.add_worksheet("TURMA")
 
 
+def editarMenu(abaMenu, workbook, hierarquia):
+    vetor_hierarquia = [item.strip() for item in hierarquia.split(",")]
+    abaMenu.hide_gridlines(2)
+    abaMenu.set_column('A:Z', 12)
+
+    # =========================
+    # FORMATOS
+    # =========================
+    formato_titulo = workbook.add_format({
+        'bold': True,
+        'font_size': 11,
+        'align': 'center',
+        'bg_color': '#FFE6B3',
+        'valign': 'vcenter'
+    })
+
+    formato_bloco_claro = workbook.add_format({
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#F3F3F3'
+        
+    })
+
+    formato_bloco_muito_claro = workbook.add_format({
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#FFFFFF'
+        
+    })
+
+    formato_rodape = workbook.add_format({
+        'bg_color': '#FCD904'
+        
+    })
+
+    formato_link_claro = workbook.add_format({
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#F3F3F3',
+        'font_color': 'blue',
+        'underline': 1
+    })
+
+    formato_link_escuro = workbook.add_format({
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#E6E6E6',
+        'font_color': 'blue',
+        'underline': 1
+    })
+
+    formato_branco = workbook.add_format({
+        'bg_color': '#FFFFFF',
+        'border': 0
+    })
+
+    for linha_branca in range(0, 200):
+        abaMenu.set_row(linha_branca, 15)  
+        for col in range(0, 26):  
+            abaMenu.write_blank(linha_branca, col, '', formato_branco)
+
+    # =========================
+    # TAMANHO DAS COLUNAS
+    # =========================
+    abaMenu.set_column('A:A', 2)
+    abaMenu.set_column('B:H', 9)
+    abaMenu.set_column('I:I', 25)
+    
+
+    # =========================
+    # ESPAÇOS SUPERIORES
+    # =========================
+    abaMenu.merge_range('B2:I4', '', formato_bloco_claro)
+    abaMenu.insert_image('B2', 'logoCaed.png')
+    abaMenu.merge_range('B5:I5', '', formato_rodape)
+    abaMenu.insert_image('I2', 'img_relatorio.png')
+    # =========================
+    # TÍTULO PRINCIPAL
+    # =========================
+    titulo = f"{vetor_hierarquia[0].upper()}S - 1ª AVALIAÇÃO DE FLUÊNCIA 2026"
+    abaMenu.merge_range('B6:I7', titulo, formato_titulo)
+
+    # =========================
+    # BLOCOS DE NAVEGAÇÃO
+    # =========================
+    linha = 8
+
+    for i, item in enumerate(vetor_hierarquia):
+
+        nome = item.capitalize()
+
+        # Alterna cor como no modelo
+        if i % 2 == 0:
+            formato_esquerda = formato_bloco_claro
+            formato_direita = formato_link_escuro
+        else:
+            formato_esquerda = formato_bloco_muito_claro
+            formato_direita = formato_link_claro
+
+        # Texto da esquerda
+        abaMenu.merge_range(f'B{linha}:G{linha}', f'Nível {nome}', formato_esquerda)
+
+        # Link da direita
+        abaMenu.merge_range(
+            f'H{linha}:I{linha}',
+            f'Monitoramento por {nome}',
+            formato_direita
+        )
+
+        # Link interno para a aba correspondente
+        abaMenu.write_url(
+            f'H{linha}',
+            f"internal:'{nome.upper()}'!A1",
+            formato_direita,
+            string=f'Monitoramento por {nome}'
+        )
+
+        linha += 1
+
+    # =========================
+    # RODAPÉ AMARELO
+    # =========================
+    abaMenu.merge_range(f'B{linha}:I{linha}', '', formato_rodape)  
 
 def criarRelatorio(hierarquia):
     ##aqui a ideia é chamar as funções para criar o relatório, como se fosse uma main

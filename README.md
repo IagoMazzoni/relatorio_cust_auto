@@ -5,6 +5,8 @@ Até o breve momento o código é capaz de
 1- fazer a conexão com o servidor 14
 2- cria um relatório .xlsx vazio
 3- obviamente mas não menos importante, fecha a conexão com o banco e com o relatório pre aberto
+4- agora o código ja cria as abas necessárias, pelo menos para projetos com apenas 1 disciplina
+5- edita a aba MENU
 
 Bibliotecas usadas:
 1- pyodbc (pip install pyodbc)-> usada para fazer conexão com o banco 
