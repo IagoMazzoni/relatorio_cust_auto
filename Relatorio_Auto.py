@@ -32,21 +32,47 @@ def criaExcel(nome_arquivo):
     workbook = xlsxwriter.Workbook(nome_arquivo)
     return workbook
 
-def criarRelatorio():
+def adicionaAbas(hierarquia, workbook):
+    vetor_hierarquia = hierarquia.split(",")
+
+    workbook.add_worksheet("MENU")
+
+    for item in vetor_hierarquia:
+        print("Criando aba " + item)
+    
+        if item.upper() == "PAIS":
+            workbook.add_worksheet("PAIS")
+    
+        elif item.upper() == "ESTADO":
+            workbook.add_worksheet("ESTADO")
+    
+        elif item.upper() == "REGIONAL":
+            workbook.add_worksheet("REGIONAL")
+    
+        elif item.upper() == "MUNICIPIO":
+            workbook.add_worksheet("MUNICIPIO")
+    
+        elif item.upper() == "ESCOLA":
+            workbook.add_worksheet("ESCOLA")
+    
+        elif item.upper() == "TURMA":
+            workbook.add_worksheet("TURMA")
+
+
+
+def criarRelatorio(hierarquia):
     ##aqui a ideia é chamar as funções para criar o relatório, como se fosse uma main
 
-    conectado = False
-    conexao = None
+    #conectado = False
+    #conexao = None
 
-    while conectado is not True:
-        conectado, conexao = pedeSenha()
-    
-
+    #while conectado is not True:
+    #    conectado, conexao = pedeSenha()
 
     workbook = criaExcel("RelCust.xlsx")
-
+    adicionaAbas (hierarquia, workbook)
     
-    conexao.close()
+    #conexao.close()
     workbook.close()
 
     return
@@ -70,31 +96,37 @@ def menu():
 
             while True:
                 print("Selecione a hierarquia do projeto:")
-                print("1 - Estado, Regional, Municipio, Escola, Turma")
-                print("2 - Municipio, Escola, Turma")
-                print("3 - Municipio, Regional, Escola, Turma")
-                print("4 - Inserir outra hierarquia")
-                print("5 - Sair")
+                print("1 - Sair")
+                print("2 - Inserir outra hierarquia")
+                print("3 - Estado, Regional, Municipio, Escola, Turma")
+                print("4 - Municipio, Escola, Turma")
+                print("5 - Municipio, Regional, Escola, Turma")
+                print("6 - Pais, Estado, Regional, Municipio, Escola, Turma")
+                
                 opcaoHierarquia = input("Escolha uma opção: ")
 
-                if opcaoHierarquia == "1":
+                if opcaoHierarquia == "3":
                     criarRelatorio("Estado,Regional,Municipio,Escola,Turma")
                     break
 
-                elif opcaoHierarquia == "2":
+                elif opcaoHierarquia == "4":
                     criarRelatorio("Municipio,Escola,Turma")
                     break
 
-                elif opcaoHierarquia == "3":
+                elif opcaoHierarquia == "5":
                     criarRelatorio("Municipio,Regional,Escola,Turma")
                     break
+                    
+                elif opcaoHierarquia == "6":
+                    criarRelatorio("Pais,Estado,Regional,Municipio,Escola,Turma")
+                    break    
 
-                elif opcaoHierarquia == "4":
+                elif opcaoHierarquia == "2":
                     hierarquia = input("Escreva a hierarquia, separando por virgula e sem espaços. (Ex: Municipio,Escola,Turma)")
                     criarRelatorio(hierarquia)
                     break
 
-                elif opcaoHierarquia == "5":
+                elif opcaoHierarquia == "1":
                     print("Saindo")
                     break
 

@@ -8,4 +8,4 @@ Até o breve momento o código é capaz de
 
 Bibliotecas usadas:
 1- pyodbc (pip install pyodbc)-> usada para fazer conexão com o banco 
-2- xlsxwriter (pip install xlsxwriter)-> usada para criar e editar o arquivo xlsx. um ponto importante sobre essa biblioteca é que ela não é capaz de editar um excel ja pronto, ela sempre cria um novo, por isso o código cria e abre o excel, edita e depois fecha tudo de uma vez. Optei por ela por causa das funcionalidades de edição e formatação, talvez eu me arrependa num futuro, não tive paciencia para ler a documentação toda.
+2- xlsxwriter (pip install xlsxwriter)-> usada para criar e editar o arquivo xlsx. um ponto importante sobre essa biblioteca é que ela não é capaz de editar um excel ja pronto, ela sempre cria um novo, por isso o código cria e abre o excel, edita e depois fecha tudo de uma vez. Optei por ela por causa das funcionalidades de edição e formatação, talvez eu me arrependa num futuro, não tive paciencia para ler a documentação toda (https://xlsxwriter.readthedocs.io/tutorial01.html).
