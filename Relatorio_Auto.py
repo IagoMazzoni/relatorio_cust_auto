@@ -32,11 +32,11 @@ def criaExcel(nome_arquivo):
     workbook = xlsxwriter.Workbook(nome_arquivo)
     return workbook
 
-def adicionaAbas(hierarquia, workbook):
+def adicionaAbas(hierarquia, workbook, conexao):
     vetor_hierarquia = hierarquia.split(",")
 
     abaMenu = workbook.add_worksheet("MENU")
-    editarMenu(abaMenu, workbook, hierarquia)
+    editarMenu(abaMenu, workbook, hierarquia, conexao)
 
     for item in vetor_hierarquia:
         print("Criando aba " + item)
@@ -60,7 +60,45 @@ def adicionaAbas(hierarquia, workbook):
             abaTurma = workbook.add_worksheet("TURMA")
 
 
-def editarMenu(abaMenu, workbook, hierarquia):
+def getNomeAvaliacao(conexao):
+    try:        
+        tabela_completa = input("Insira o nome do L204:")
+        cursor = conexao.cursor()      
+        query = f"""
+        SELECT DISTINCT TOP 1
+                NM_AVALIACAO
+        FROM {tabela_completa}
+        WHERE NM_AVALIACAO IS NOT NULL 
+          AND CD_PROGRAMA_REGISTRO IS NOT NULL
+        """
+        
+        print(f"Executando query na tabela: {tabela_completa}")
+        cursor.execute(query)
+        resultado = cursor.fetchone()
+        
+        if resultado:
+            return str(resultado[0]).strip()
+
+        else:
+            print("Nenhum nome de avaliação encontrado.")
+
+        
+        
+        
+    except Exception as e:
+        print(f"⚠️  Não foi possível consultar o banco para nome do arquivo: {e}")
+    
+    # Fallback: gerar nome manualmente
+    print("\n📝 Informe os dados para o nome do arquivo:")
+    
+    nm_avaliacao = input("Nome da Avaliação: ").strip()
+    if not nm_avaliacao:
+        nm_avaliacao = "AVALIACAO"
+    
+    return nm_avaliacao
+
+def editarMenu(abaMenu, workbook, hierarquia, conexao):
+    nome_avaliacao = getNomeAvaliacao(conexao)
     vetor_hierarquia = [item.strip() for item in hierarquia.split(",")]
     abaMenu.hide_gridlines(2)
     abaMenu.set_column('A:Z', 12)
@@ -139,7 +177,7 @@ def editarMenu(abaMenu, workbook, hierarquia):
     # =========================
     # TÍTULO PRINCIPAL
     # =========================
-    titulo = f"{vetor_hierarquia[0].upper()}S - 1ª AVALIAÇÃO DE FLUÊNCIA 2026"
+    titulo = nome_avaliacao
     abaMenu.merge_range('B6:I7', titulo, formato_titulo)
 
     # =========================
@@ -186,25 +224,22 @@ def editarMenu(abaMenu, workbook, hierarquia):
 
 def criarRelatorio(hierarquia):
     ##aqui a ideia é chamar as funções para criar o relatório, como se fosse uma main
+    ##ainda não existe a necessidade com a conexão com o banco, mas em breve terá
 
-    #conectado = False
-    #conexao = None
+    conectado = False
+    conexao = None
 
-    #while conectado is not True:
-    #    conectado, conexao = pedeSenha()
+    while conectado is not True:
+        conectado, conexao = pedeSenha()
 
     workbook = criaExcel("RelCust.xlsx")
-    adicionaAbas (hierarquia, workbook)
+    adicionaAbas (hierarquia, workbook, conexao)
     
     #conexao.close()
     workbook.close()
 
     return
 
-
-def main():
-    
-    menu()
 
 
 
@@ -265,6 +300,11 @@ def menu():
 
         else:
             print("Opção inválida. Tente novamente.\n")
+
+
+def main():
+    
+    menu()
 
 if __name__ == "__main__":
     main()
